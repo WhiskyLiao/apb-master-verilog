@@ -1,0 +1,5 @@
+# Icarus Verilog compiled simulation binary
+apb_master_tb
+
+# VCD waveform dumps
+*.vcd
