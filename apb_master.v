@@ -65,13 +65,13 @@ module apb_master #(
     // Each slave occupies a 256 MB region starting at i * 0x1000_0000.
     // Adjust for your memory map as needed.
     // -----------------------------------------------------------------------
-    function automatic [NUM_SLAVES-1:0] addr_decode;
+    function [NUM_SLAVES-1:0] addr_decode;
         input [ADDR_WIDTH-1:0] addr;
-        integer i;
+        reg [3:0] i;
         begin
             addr_decode = {NUM_SLAVES{1'b0}};
-            for (i = 0; i < NUM_SLAVES; i = i + 1) begin
-                if (addr[ADDR_WIDTH-1 -: 4] == i[3:0])
+            for (i = 0; i < NUM_SLAVES; i = i + 1'b1) begin
+                if (addr[ADDR_WIDTH-1 -: 4] == i)
                     addr_decode[i] = 1'b1;
             end
         end
