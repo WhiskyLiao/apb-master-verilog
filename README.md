@@ -1,25 +1,32 @@
-# APB Master
+# APB Master — Verilog
 
-An AMBA APB4-compliant master controller implemented in Verilog. Supports parameterizable address/data widths, multiple slaves, byte-level write strobes, wait states, and slave error reporting.
+An AMBA APB4-compliant master controller implemented in synthesisable Verilog. Supports parameterisable address/data widths, multiple slaves, byte-level write strobes, wait states, and slave error reporting.
 
 ## Features
 
 - Full AMBA APB4 protocol compliance (SETUP + ACCESS two-phase transfer)
-- Parameterizable address width, data width, and slave count
+- Parameterisable address width, data width, and slave count
 - One-hot slave select with configurable address decoding
 - Back-to-back transfer support (zero idle cycles between transactions)
 - Wait-state handling via `PREADY`
 - Slave error capture via `PSLVERR`
 - Write byte strobes (`PSTRB`) and protection signals (`PPROT`)
 - All APB outputs registered for clean timing
-- Synthesizable (no `automatic` tasks, no `integer` loop variables)
+- Synthesisable (no `automatic` tasks, no `integer` loop variables)
 
-## Files
+## Repository Layout
 
-| File | Description |
-|------|-------------|
-| `apb_master.v` | APB4 master module |
-| `apb_master_tb.v` | Self-checking testbench with 7 test scenarios |
+```
+.
+├── rtl/
+│   └── apb_master.v       # Synthesisable APB4 master
+├── tb/
+│   └── apb_master_tb.v    # Self-checking testbench
+├── sim/                   # Simulation artefacts (git-ignored)
+├── Makefile               # Icarus Verilog simulation flow
+├── LICENSE
+└── README.md
+```
 
 ## Parameters
 
@@ -69,7 +76,9 @@ An AMBA APB4-compliant master controller implemented in Verilog. Supports parame
 | `PREADY` | input | Slave ready (hold low to insert wait states) |
 | `PSLVERR` | input | Slave error |
 
-## State Machine
+## Operation
+
+The master implements the three-state APB transfer FSM:
 
 ```
          req_valid
@@ -139,21 +148,41 @@ apb_master #(
 
 ## Simulation
 
-Requires [Icarus Verilog](https://github.com/steveicarus/iverilog).
+Requires [Icarus Verilog](https://steveicarus.github.io/iverilog/) (`iverilog` / `vvp`). Optional [GTKWave](https://gtkwave.sourceforge.net/) for waveforms.
 
 ```bash
-# Compile
-iverilog -o apb_master_tb apb_master.v apb_master_tb.v
-
-# Run
-vvp apb_master_tb
-
-# View waveforms (requires GTKWave)
-gtkwave apb_master_tb.vcd
+make run      # compile RTL + testbench and run the simulation
+make waves    # run, then open the waveform in GTKWave
+make clean    # remove the sim/ build directory
 ```
 
-The testbench covers 7 scenarios: single write, single read, write with wait states, read with wait states, slave error injection, APB timing compliance, and byte-strobe/PPROT verification.
+Build artefacts (the compiled binary, `*.vcd`, and `sim.log`) are written to the git-ignored `sim/` directory.
+
+### Test Cases
+
+| # | Description |
+|---|-------------|
+| 1 | Single write |
+| 2 | Single read |
+| 3 | Write with wait states |
+| 4 | Read with wait states |
+| 5 | Slave error injection |
+| 6 | APB timing compliance |
+| 7 | Byte-strobe / `PPROT` verification |
+
+Expected output:
+
+```
+ Results: 15 passed, 0 failed
+ALL TESTS PASSED
+```
+
+## Synthesis Notes
+
+- All APB outputs are registered; no combinational path from `req_*` to the bus.
+- No latches; all state is held in `always @(posedge PCLK or negedge PRESETn)`.
+- Synthesisable subset only — no `automatic` tasks or `integer` loop variables.
 
 ## License
 
-This project is released under the MIT License.
+Released under the MIT License — see [LICENSE](LICENSE).

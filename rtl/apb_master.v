@@ -1,3 +1,5 @@
+`timescale 1ns/1ps
+
 // APB Master Module — AMBA APB4 Specification Compliant
 // Implements: IDLE/SETUP/ACCESS FSM, PREADY wait-state support, PSLVERR error
 // capture, write strobes (PSTRB), protection (PPROT), multi-slave PSEL decode.

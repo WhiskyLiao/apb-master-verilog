@@ -1,5 +1,7 @@
-# Icarus Verilog compiled simulation binary
-apb_master_tb
+# Simulation build artifacts (Icarus Verilog binaries, waveforms, logs)
+sim/
 
-# VCD waveform dumps
+# In case tools are run outside the sim/ directory
+*.vvp
 *.vcd
+*.log

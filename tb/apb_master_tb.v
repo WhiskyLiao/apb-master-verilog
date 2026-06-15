@@ -341,7 +341,7 @@ module apb_master_tb;
     // Waveform dump
     // -----------------------------------------------------------------------
     initial begin
-        $dumpfile("apb_master_tb.vcd");
+        $dumpfile("sim/apb_master_tb.vcd");
         $dumpvars(0, apb_master_tb);
     end
 
